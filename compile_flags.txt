@@ -1,0 +1,2 @@
+-I
+/home/rid/.platformio/packages/framework-arduino-avr/cores/arduino
