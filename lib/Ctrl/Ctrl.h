@@ -7,12 +7,15 @@
 #define CTRL
 
 namespace ctrl {
+enum Event_Types { ROTATE, KEYDOWN, CLICK, KEYUP, LONG_KEYDOWN };
+
 struct Encoder_Event {
+  uint8_t target;
   bool positive_tick;
   bool negative_tick;
 };
 
-typedef void (*Encoder_Handler)(Encoder_Event const *event);
+typedef void (*Encoder_Handler)(Encoder_Event *event);
 
 struct Encoder_Handlers {
   Encoder_Handler rotate;
@@ -20,33 +23,31 @@ struct Encoder_Handlers {
 
 class Encoder {
 private:
-  uint8_t stable_state, l_pin, r_pin, prev_unstable_state, unstable_signal;
-  bool is_stable_state, is_new_unstable_state, tick, positive_tick,
-      negative_tick;
+  uint8_t l_pin, r_pin, target, prev_unstable_state, unstable_state;
+  bool positive_tick, negative_tick;
   Encoder_Handlers handlers;
 
   uint8_t get_new_state();
-  void reset_stable_state();
-  void set_unstable_signal(uint8_t);
+  void set_unstable_state(uint8_t);
   void reset_tick();
-  void set_tick();
-  bool is_unstable_state(uint8_t);
-  bool is_new_tick(uint8_t);
-  bool is_same_tick(uint8_t);
-  void read();
+  void set_tick(uint8_t);
+  bool is_stable_state(uint8_t);
+  bool is_new_tick();
+  bool read();
+  void set_target();
 
 public:
-  Encoder(uint8_t, uint8_t, uint8_t);
+  Encoder(uint8_t, uint8_t);
 
   void listen();
-  void on(const char *event_name, Encoder_Handler);
+  void on(Event_Types, Encoder_Handler);
 };
 
 struct Button_Event {
   uint8_t target;
 };
 
-typedef void (*Button_Handler)(Button_Event const *);
+typedef void (*Button_Handler)(Button_Event *);
 
 struct Button_Handlers {
   Button_Handler keydown;
@@ -65,10 +66,10 @@ private:
   void handle_new_state(bool);
 
 public:
-  Button(bool, uint8_t);
+  Button(uint8_t);
 
   void listen();
-  void on(char const *, Button_Handler);
+  void on(Event_Types, Button_Handler);
 };
 } // namespace ctrl
 

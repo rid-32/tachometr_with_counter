@@ -1,2 +1,3 @@
--I
-/home/rid/.platformio/packages/framework-arduino-avr/cores/arduino
+-I/home/rid/.platformio/packages/framework-arduino-avr/cores/arduino
+-I./lib/Ctrl
+-I./.pio/libdeps/nanoatmega328/TimerOne
